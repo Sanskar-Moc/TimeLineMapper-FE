@@ -1,0 +1,10 @@
+<h1>{{data.name}}</h1>
+
+<button (click)="checkData()">go</button>
+<angular-editor [placeholder]="'Enter text here...'" [config]="config" [(ngModel)]="htmlContent"></angular-editor>
+<h2>{{htmlContent}}</h2>
+<angular-editor *ngIf="checkDate(this.data.end_time)" [placeholder]="'Enter text here...'" [config]="config" [(ngModel)]="reportContent"></angular-editor>
+<h2>{{reportContent}}</h2>
+
+<button (click)="postData()">Save Data</button>
+<button (click)="updateData()">Update Data</button>
