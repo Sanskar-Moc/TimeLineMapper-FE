@@ -11,6 +11,7 @@ import * as moment from 'moment';
   styleUrls: ['./timeline-editor.component.css']
 })
 export class TimelineEditorComponent {
+  name=JSON.parse(sessionStorage.getItem('LoggedInUser')!).name;
   htmlContent=''
   reportContent=''
   route=inject(ActivatedRoute)
