@@ -1,21 +1,40 @@
-<div class="flex flex-col justify-center items-center h-screen " style="background-image: url('https://c0.wallpaperflare.com/path/644/684/1003/career-path-choices-organization-5e2da7aea09a6b104aa793fee2b7150f.jpg')">
-    <h1 class="text-4xl font-bold  p-6  text-white w-100 rounded-lg mb-6" style="background: rgba(0, 0,0, 0.5);"> {{name}} ▒ {{data.title}}</h1> 
-    <div class="flex flex-row  mx-6">
-        <div class=" bg-white px-6 py-6  mx-2 rounded-lg" style="background: rgba(255, 255,255, 0.9);">
+<div class="flex flex-col justify-center items-center h-screen " style="background-image: url('https://c0.wallpaperflare.com/path/644/684/1003/career-path-choices-organization-5e2da7aea09a6b104aa793fee2b7150f.jpg');
+background-size: cover;
+">
+    <button
+        (click)="goDashboard()"
+        class="middle none center mr-4 mb-4 rounded-lg bg-red-500 py-3 px-10 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+        Back</button>
+    <h1 class="text-4xl font-bold  p-6  text-white w-100 rounded-lg mb-6" style="background: rgba(0, 0,0, 0.5);">
+        {{name}} ▒ {{data.title}}</h1>
+    <div class="flex flex-row  mx-6" style="display: flex;">
+        <div *ngIf="data.state==='STARTED' || data.state==='REG'" class=" bg-white px-6 py-6  mx-2 rounded-lg"
+            style="background: rgba(255, 255,255, 0.9);">
             <h1 class="text-2xl font-bold mb-6 ">What needs to be done</h1>
             <angular-editor [placeholder]="'Enter text here...'" [config]="config"
                 [(ngModel)]="htmlContent"></angular-editor>
             <h2>{{htmlContent}}</h2>
         </div>
-        <div class=" bg-white px-6 py-6 mx-2 rounded-lg" style="background: rgba(255, 255,255, 0.9);">
+        <div *ngIf="data.state==='PENDING'||data.state==='FINISHED'" class=" bg-white px-6 py-6  mx-2 rounded-lg"
+            style="background: rgba(255, 255,255, 0.9);">
+            <h1 class="text-2xl font-bold mb-6 ">What needs to be done</h1>
+            <div [innerHTML]="htmlContent" style="height: 15rem;"></div>
+        </div>
+        <div *ngIf="!(data.state==='FINISHED')" class="bg-white px-6 py-6 mx-2 rounded-lg"
+            style="background: rgba(255, 255,255, 0.9);">
             <h1 class="text-2xl font-bold mb-6 " *ngIf="checkDate(this.data.end_time)">What actually you did</h1>
             <angular-editor style=" background-color: beige;" *ngIf="checkDate(this.data.end_time)"
                 [placeholder]="'Enter text here...'" [config]="config" [(ngModel)]="reportContent"></angular-editor>
             <h2>{{reportContent}}</h2>
         </div>
-       </div> 
+        <div *ngIf="data.state==='FINISHED'" class=" bg-white px-6 py-6 mx-2 rounded-lg"
+            style="background: rgba(255, 255,255, 0.9);">
+            <h1 class="text-2xl font-bold mb-6 " *ngIf="checkDate(this.data.end_time)">What actually you did</h1>
+            <div [innerHTML]="reportContent" style="height: 15rem;"></div>
+        </div>
+    </div>
 
-        <!-- <button (click)="checkData()" class="middle none center mr-4 rounded-lg bg-blue-500 py-3 
+    <!-- <button (click)="checkData()" class="middle none center mr-4 rounded-lg bg-blue-500 py-3 
 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 
 focus:opacity-[0.85] focus:shadow-none 
 active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
@@ -23,18 +42,19 @@ active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:o
 
 
 
-        <br><br>
-        <div class=" flex flex-row mx-2">
-            
-            <button
-                class="middle none center mr-4 rounded-lg bg-blue-500 py-3 px-10 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                data-ripple-light="true" (click)="postData()">Save Data
-            </button>
-        
-            <button
-                class="middle none center mr-4 rounded-lg bg-green-500 py-3 px-10 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                data-ripple-light="true" data-ripple-light="true" (click)="updateData()">Update Data
-            </button>
-        </div>
-    
+    <br><br>
+    <div class=" flex flex-row mx-2 my-2">
+
+        <button
+            class="middle none center mr-4 rounded-lg bg-blue-500 py-3 px-10 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            data-ripple-light="true" (click)="postData()" *ngIf="data.state==='REG'">Save Data
+        </button>
+
+        <button
+            class="middle none center mr-4 rounded-lg bg-green-500 py-3 px-10 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            *ngIf="!(data.state==='REG') && !(data.state==='FINISHED')" data-ripple-light="true"
+            data-ripple-light="true" (click)="updateData()">{{data.state==='PENDING'?'Submit Report':'Save Data'}}
+        </button>
+    </div>
+
 </div>

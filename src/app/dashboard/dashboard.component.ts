@@ -18,11 +18,14 @@ export class DashboardComponent {
   name=JSON.parse(sessionStorage.getItem('LoggedInUser')!).name;
   imgUrl=JSON.parse(sessionStorage.getItem('LoggedInUser')!).picture;
   email=JSON.parse(sessionStorage.getItem('LoggedInUser')!).email;
-  today=new Date()
+  now: Date = new Date();
+  formattedDate = this.now.toISOString().slice(0, 10) + "T00:00:00";
+  
   timelineList: any[] | undefined;
 
   constructor(private timelineservice:TimelinedataService,@Inject('moment') private moment: moment.Moment){}
   ngOnInit(){
+    console.log(this.formattedDate)
     this.loadtimelines(JSON.parse(sessionStorage.getItem('LoggedInUser')!).email)
     // this.loadalltimelines()
   
@@ -49,7 +52,7 @@ export class DashboardComponent {
     start_time:'',
     end_time:'',
     userId:this.email,
-    state:'STARTED'
+    state:'REG'
   }
   private router=inject(Router);
 
@@ -60,17 +63,28 @@ export class DashboardComponent {
 
 
   gotoEdit(){
+    if(this.data.title==='' || this.data.start_time==='' || this.data.end_time==='') {
+      alert("All fields are required")
+      return
+    }
     this.router.navigate(['editor'],{ queryParams: { data: JSON.stringify(this.data) } });
   }
   gotoEditSelect(data:any){
+    if(this.checkDate(data.end_time) && data.state!=='FINISHED'){
+        data.state="PENDING";
+        this.timelineservice.UpdateTimeline(data.id,data).subscribe(() => {
+          this.router.navigate(['editor'],{ queryParams: { data: JSON.stringify(data) } })
+        })
+    }
+
     this.router.navigate(['editor'],{ queryParams: { data: JSON.stringify(data) } });
   }
   checkDate(date:any){
-   if( moment(date).isSameOrAfter(new Date())){
-    this.data.state='PENDING'
+   if( moment(date).isSameOrBefore(new Date())){
+    
     return true;
    }
-   this.data.state='STARTED'
+   
    return false;
   }
 

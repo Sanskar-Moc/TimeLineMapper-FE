@@ -55,13 +55,20 @@ export class TimelineEditorComponent {
       // console.log(this.timelineData)
       this.data.description=this.htmlContent
       this.data.report=this.reportContent
+      if(this.data.state==='PENDING'){
+        this.data.state='FINISHED'
+      }
       return this.timelineservice.UpdateTimeline(this.data.id,this.data).subscribe(() => {
         this.router.navigate(['dashboard'])
       })
     }
+    goDashboard(){
+      this.router.navigate(['dashboard'])
+    }
     postData(){
       this.data.description=this.htmlContent
       this.data.report=this.reportContent
+      this.data.state='STARTED';
       return this.timelineservice.PostTimeline(this.data).subscribe(() => {
           this.router.navigate(['dashboard'])
       })
