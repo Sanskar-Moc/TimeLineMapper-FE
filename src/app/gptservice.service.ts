@@ -9,7 +9,7 @@ export class GptserviceService {
 
   constructor() {
     const config = new Configuration({
-      apiKey: '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', // Access API key from environment
+      apiKey: '', // Access API key from environment
     });
     this.openai = new OpenAIApi(config);
   }
