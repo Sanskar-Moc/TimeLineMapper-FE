@@ -23,7 +23,7 @@ export class DashboardComponent {
   
   timelineList: any[] | undefined;
 
-  constructor(private timelineservice:TimelinedataService,@Inject('moment') private moment: moment.Moment){}
+  constructor( private timelineservice:TimelinedataService,@Inject('moment') private moment: moment.Moment){}
   ngOnInit(){
     console.log(this.formattedDate)
     this.loadtimelines(JSON.parse(sessionStorage.getItem('LoggedInUser')!).email)
