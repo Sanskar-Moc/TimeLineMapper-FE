@@ -4,6 +4,7 @@ import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { Timeline } from '../models/timeline';
 import { TimelinedataService } from '../timelinedata.service';
 import * as moment from 'moment';
+import { GptserviceService } from '../gptservice.service';
 
 @Component({
   selector: 'app-timeline-editor',
@@ -17,6 +18,7 @@ export class TimelineEditorComponent {
   route=inject(ActivatedRoute)
   router=inject(Router)
   timelineData:Timeline=new Timeline();
+  gpthelp='';
 
   data:any
   config: AngularEditorConfig = {
@@ -30,7 +32,7 @@ export class TimelineEditorComponent {
     defaultFontName: 'Arial',
    
   };
-  constructor(private timelineservice:TimelinedataService){}
+  constructor(private gptServ:GptserviceService ,private timelineservice:TimelinedataService){}
 
   ngOnInit(){
     this.checkData();
@@ -72,5 +74,28 @@ export class TimelineEditorComponent {
       return this.timelineservice.PostTimeline(this.data).subscribe(() => {
           this.router.navigate(['dashboard'])
       })
+    }
+    async getGptHelp(){
+      let retData=await this.gptServ.generateHelp(this.data.description,this.data.report)
+      this.gpthelp=this.stringToBulletPoints(retData)
+    }
+    stringToBulletPoints(text: string): string {
+      const points = text.split(/\d+\./); // Split text into points based on the numbering
+      if (points.length <= 1) {
+          return ''; // Return empty string if no points are found
+      }
+  
+      // Remove the empty string from the beginning of the array
+      points.shift();
+  
+      // Generate HTML for bullet points
+      const bulletPointsHTML = points.map(point => {
+          return `
+              <li class="list-disc ml-4">${point.trim()}</li>
+          `;
+      }).join('');
+  
+      // Wrap bullet points in an unordered list (ul) tag
+      return `<ul class="list-inside">${bulletPointsHTML}</ul>`;
   }
 }
